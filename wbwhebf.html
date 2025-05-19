@@ -1,0 +1,2353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Comprehensive Organic Chemistry Functional Group Converter</title>
+<style>
+  body {
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    margin: 0; padding: 1.5rem;
+    color: #2c2c2c;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  main {
+    background: #fff8f0;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    max-width: 900px;
+    width: 100%;
+    padding: 2rem 3rem;
+  }
+  header {
+    text-align: center;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: #d35400;
+    margin-bottom: 2rem;
+    user-select: none;
+  }
+  label {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+    display: block;
+    color: #b03a02;
+  }
+  select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1.2rem;
+    border-radius: 14px;
+    border: 2.5px solid #f39c12;
+    font-weight: 700;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+  }
+  select:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 10px #e67e22aa;
+  }
+  button {
+    margin-top: 2.5rem;
+    background: #d35400;
+    color: white;
+    font-weight: 900;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 18px;
+    padding: 1rem 0;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 0 8px 20px #d35400cc;
+    transition: background 0.3s ease;
+    user-select: none;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+  }
+  button:hover {
+    background: #a84300;
+    box-shadow: 0 10px 30px #a84300cc;
+  }
+  .result {
+    margin-top: 2.5rem;
+    background: #fff3e0;
+    border-left: 8px solid #d35400;
+    border-radius: 16px;
+    padding: 1.8rem 2rem;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #5d2a00;
+    white-space: pre-wrap;
+    max-height: 550px;
+    overflow-y: auto;
+  }
+  /* Chemical formula styling */
+  .chem-formula {
+    font-weight: 900;
+    color: #d35400;
+  }
+  .sub {
+    vertical-align: sub;
+    font-size: 0.7em;
+  }
+  .sup {
+    vertical-align: super;
+    font-size: 0.6em;
+  }
+  /* Step styling */
+  .step {
+    margin-bottom: 1.4rem;
+    padding-left: 1rem;
+    border-left: 4px solid #e67e22;
+  }
+  .step-title {
+    font-weight: 900;
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+    color: #b03a02;
+  }
+  .explanation {
+    font-style: italic;
+    color: #7f4a01;
+    margin-top: 0.2rem;
+  }
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-size: 1.8rem;
+    color: #d35400;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>Organic Chemistry Functional Group Converter</header>
+
+  <label for="fgStart">Select Starting Functional Group:</label>
+  <select id="fgStart" aria-label="Starting Functional Group">
+    <option value="">--Select--</option>
+    <option value="alkane">Alkane</option>
+    <option value="alkene">Alkene</option>
+    <option value="alkyne">Alkyne</option>
+    <option value="alkylHalide">Alkyl Halide</option>
+    <option value="alcohol">Alcohol</option>
+    <option value="aldehyde">Aldehyde</option>
+    <option value="ketone">Ketone</option>
+    <option value="carboxylicAcid">Carboxylic Acid</option>
+    <option value="ester">Ester</option>
+    <option value="amine">Amine</option>
+    <option value="amide">Amide</option>
+    <option value="nitrile">Nitrile</option>
+    <option value="nitro">Nitro Compound</option>
+  </select>
+
+  <label for="fgTarget">Select Target Functional Group:</label>
+  <select id="fgTarget" aria-label="Target Functional Group">
+    <option value="">--Select--</option>
+    <option value="alkane">Alkane</option>
+    <option value="alkene">Alkene</option>
+    <option value="alkyne">Alkyne</option>
+    <option value="alkylHalide">Alkyl Halide</option>
+    <option value="alcohol">Alcohol</option>
+    <option value="aldehyde">Aldehyde</option>
+    <option value="ketone">Ketone</option>
+    <option value="carboxylicAcid">Carboxylic Acid</option>
+    <option value="ester">Ester</option>
+    <option value="amine">Amine</option>
+    <option value="amide">Amide</option>
+    <option value="nitrile">Nitrile</option>
+    <option value="nitro">Nitro Compound</option>
+  </select>
+
+  <button onclick="showConversion()">Show Detailed Conversion</button>
+
+  <div class="result" id="conversionResult" aria-live="polite"></div>
+</main>
+
+<script>
+  // Utility: chemical formula with subscripts for numbers
+  function chemFormula(str) {
+    // Replace digits with subscript spans
+    return str.replace(/([A-Z][a-z]?)(\d*)/g, (m, elem, num) => {
+      if (num === '') return `<span class="chem-formula">${elem}</span>`;
+      return `<span class="chem-formula">${elem}<span class="sub">${num}</span></span>`;
+    }).replace(/\^-/g, `<span class="sup">-</span>`)
+      .replace(/\^+/g, `<span class="sup">+</span>`);
+  }
+
+  // Capitalize and prettify functional group names
+  function prettyName(str) {
+    const map = {
+      alkane: "Alkane",
+      alkene: "Alkene",
+      alkyne: "Alkyne",
+      alkylHalide: "Alkyl Halide",
+      alcohol: "Alcohol",
+      aldehyde: "Aldehyde",
+      ketone: "Ketone",
+      carboxylicAcid: "Carboxylic Acid",
+      ester: "Ester",
+      amine: "Amine",
+      amide: "Amide",
+      nitrile: "Nitrile",
+      nitro: "Nitro Compound"
+    };
+    return map[str] || str;
+  }
+
+  // A collection of all possible conversions between functional groups
+  // This is a comprehensive database where every conversion has a detailed pathway
+  const conversionDatabase = {
+    // ALKANE CONVERSIONS
+    alkane: {
+      alkene: [
+        {
+          title: "Dehydrogenation",
+          reaction: chemFormula("CH3CH2CH3 → CH3CH=CH2 + H2"),
+          explanation: "Alkanes undergo catalytic dehydrogenation at high temperature (500-600°C) over platinum, palladium, or chromium oxide catalyst to form alkenes with the elimination of hydrogen gas."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Dehydrogenation to Alkene",
+          reaction: chemFormula("CH3CH2CH3 → CH3CH=CH2 + H2"),
+          explanation: "First, dehydrogenate the alkane using high temperature (500-600°C) and platinum catalyst."
+        },
+        {
+          title: "Further Dehydrogenation",
+          reaction: chemFormula("CH3CH=CH2 → CH3C≡CH + H2"),
+          explanation: "The alkene undergoes further dehydrogenation under more severe conditions to yield the alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + X2 → RX + HX"),
+          explanation: "Alkanes react with halogens (X2 = Cl2, Br2) in the presence of UV light or heat through a free radical mechanism to form alkyl halides."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl halide via free radical bromination (UV light/heat)."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RBr + OH^- → ROH + Br^-"),
+          explanation: "The alkyl halide undergoes nucleophilic substitution with hydroxide ion in aqueous solution to form alcohol."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Cyanide",
+          reaction: chemFormula("RBr + CN^- → RCN + Br^-"),
+          explanation: "Replace bromide with cyanide ion via nucleophilic substitution."
+        },
+        {
+          title: "Partial Reduction",
+          reaction: chemFormula("RCN + DIBAL-H → RCHO"),
+          explanation: "The nitrile is reduced selectively to aldehyde using DIBAL-H (Diisobutylaluminium hydride) at low temperature (-78°C)."
+        }
+      ],
+      ketone: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RCH2R' + Br2 → RCHBrR' + HBr"),
+          explanation: "First, form a secondary alkyl halide through bromination."
+        },
+        {
+          title: "Magnesium Insertion",
+          reaction: chemFormula("RCHBrR' + Mg → RCHMgBrR'"),
+          explanation: "Form Grignard reagent using magnesium in dry ether."
+        },
+        {
+          title: "Reaction with Ester",
+          reaction: chemFormula("RCHMgBrR' + R''COOR''' → R''C(=O)CHR'R + R'''OMgBr"),
+          explanation: "React Grignard with an ester to form ketone after hydrolysis."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Cyanide",
+          reaction: chemFormula("RBr + CN^- → RCN + Br^-"),
+          explanation: "Replace bromide with cyanide via nucleophilic substitution."
+        },
+        {
+          title: "Hydrolysis of Nitrile",
+          reaction: chemFormula("RCN + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "Hydrolyze nitrile to carboxylic acid using acid and water under reflux conditions."
+        }
+      ],
+      ester: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Cyanide",
+          reaction: chemFormula("RBr + CN^- → RCN + Br^-"),
+          explanation: "Replace bromide with cyanide via nucleophilic substitution."
+        },
+        {
+          title: "Hydrolysis to Carboxylic Acid",
+          reaction: chemFormula("RCN + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "Hydrolyze nitrile to carboxylic acid using acid and water."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H^+ → RCOOR' + H2O"),
+          explanation: "React the carboxylic acid with alcohol in presence of acid catalyst to form ester."
+        }
+      ],
+      amine: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Gabriel Synthesis",
+          reaction: chemFormula("RBr + K^+ -NPhthalimide → RNPhthalimide + KBr"),
+          explanation: "React with potassium phthalimide (Gabriel synthesis)."
+        },
+        {
+          title: "Hydrazinolysis",
+          reaction: chemFormula("RNPhthalimide + N2H4 → RNH2 + Phthalhydrazide"),
+          explanation: "Cleave the phthalimide using hydrazine to liberate the primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Cyanide",
+          reaction: chemFormula("RBr + CN^- → RCN + Br^-"),
+          explanation: "Replace bromide with cyanide via nucleophilic substitution."
+        },
+        {
+          title: "Partial Hydrolysis",
+          reaction: chemFormula("RCN + H2O + H^+ → RCONH2"),
+          explanation: "Partially hydrolyze nitrile to form primary amide under controlled conditions."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Cyanide",
+          reaction: chemFormula("RBr + CN^- → RCN + Br^-"),
+          explanation: "Replace bromide with cyanide via nucleophilic substitution to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Free Radical Halogenation",
+          reaction: chemFormula("RH + Br2 → RBr + HBr"),
+          explanation: "First, convert alkane to alkyl bromide via free radical bromination."
+        },
+        {
+          title: "Nucleophilic Substitution with Nitrite",
+          reaction: chemFormula("RBr + AgNO2 → RNO2 + AgBr"),
+          explanation: "React alkyl halide with silver nitrite to produce nitro compound (Victor Meyer reaction)."
+        }
+      ]
+    },
+    
+    // ALKENE CONVERSIONS
+    alkene: {
+      alkane: [
+        {
+          title: "Catalytic Hydrogenation",
+          reaction: chemFormula("RCH=CHR' + H2 → RCH2-CH2R'"),
+          explanation: "Alkenes add hydrogen (H2) in the presence of catalysts like Pd, Pt, or Ni to form alkanes. The reaction occurs under mild conditions."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Bromination",
+          reaction: chemFormula("RCH=CHR' + Br2 → RCHBr-CHBrR'"),
+          explanation: "First, add bromine across the double bond to form dibromoalkane."
+        },
+        {
+          title: "Double Dehydrohalogenation",
+          reaction: chemFormula("RCHBr-CHBrR' + 2KOH → RC≡CR' + 2KBr + 2H2O"),
+          explanation: "Treat the dibromoalkane with strong base (alcoholic KOH) twice to eliminate HBr and form the alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Hydrogen Halide Addition",
+          reaction: chemFormula("RCH=CH2 + HX → RCH2-CH2X"),
+          explanation: "Alkenes react with hydrogen halides (HCl, HBr, HI) to form alkyl halides according to Markovnikov's rule. The halogen attaches to the carbon with fewer hydrogens."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Hydration",
+          reaction: chemFormula("RCH=CH2 + H2O + H^+ → RCH2-CH2OH"),
+          explanation: "Alkenes undergo acid-catalyzed hydration with water to form alcohols following Markovnikov's rule."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CH2 + O3 → RCHO + HCHO"),
+          explanation: "Treat alkene with ozone, followed by reductive workup with zinc and water to cleave the double bond and form aldehydes."
+        }
+      ],
+      ketone: [
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CHR' + O3 → RCHO + R'CHO"),
+          explanation: "Terminal alkenes form aldehydes, while internal alkenes form ketones or a mixture after ozonolysis."
+        },
+        {
+          title: "Wacker Oxidation",
+          reaction: chemFormula("RCH=CH2 + O2 + H2O → RCOCH3 + H2O"),
+          explanation: "Oxidation of terminal alkenes using PdCl2/CuCl2 catalyst in oxygen atmosphere to yield methyl ketones."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CH2 + O3 → Intermediate"),
+          explanation: "First, form ozonide intermediate by reacting alkene with ozone."
+        },
+        {
+          title: "Oxidative Workup",
+          reaction: chemFormula("Intermediate + H2O2 → RCOOH + HCOOH"),
+          explanation: "Oxidative workup of ozonide with hydrogen peroxide yields carboxylic acids."
+        }
+      ],
+      ester: [
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CH2 + O3 → Intermediate"),
+          explanation: "Form ozonide intermediate by reacting alkene with ozone."
+        },
+        {
+          title: "Oxidative Workup",
+          reaction: chemFormula("Intermediate + H2O2 → RCOOH + HCOOH"),
+          explanation: "Oxidative workup of ozonide with hydrogen peroxide yields carboxylic acids."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Treat carboxylic acid with alcohol in presence of acid catalyst to form ester."
+        }
+      ],
+      amine: [
+        {
+          title: "Hydrohalogenation",
+          reaction: chemFormula("RCH=CH2 + HBr → RCH2CH2Br"),
+          explanation: "Add HBr across the double bond to form alkyl bromide."
+        },
+        {
+          title: "Gabriel Synthesis",
+          reaction: chemFormula("RCH2CH2Br + KPhthalimide → RCH2CH2NPhthalimide + KBr"),
+          explanation: "React with potassium phthalimide (Gabriel synthesis)."
+        },
+        {
+          title: "Hydrazinolysis",
+          reaction: chemFormula("RCH2CH2NPhthalimide + N2H4 → RCH2CH2NH2 + Phthalhydrazide"),
+          explanation: "Cleave the phthalimide using hydrazine to liberate the primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CH2 + O3 → Intermediate"),
+          explanation: "First, form ozonide intermediate by reacting alkene with ozone."
+        },
+        {
+          title: "Oxidative Workup",
+          reaction: chemFormula("Intermediate + H2O2 → RCOOH + HCOOH"),
+          explanation: "Oxidative workup yields carboxylic acids."
+        },
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl + SO2 + HCl"),
+          explanation: "Convert acid to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Amidation",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2 + NH4Cl"),
+          explanation: "React acid chloride with excess ammonia to form amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Hydrohalogenation",
+          reaction: chemFormula("RCH=CH2 + HBr → RCH2CH2Br"),
+          explanation: "Add HBr across the double bond to form alkyl bromide."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RCH2CH2Br + KCN → RCH2CH2CN + KBr"),
+          explanation: "Replace bromide with cyanide via nucleophilic substitution to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Hydrohalogenation",
+          reaction: chemFormula("RCH=CH2 + HBr → RCH2CH2Br"),
+          explanation: "Add HBr across the double bond to form alkyl bromide."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RCH2CH2Br + AgNO2 → RCH2CH2NO2 + AgBr"),
+          explanation: "React alkyl halide with silver nitrite to produce nitro compound (Victor Meyer reaction)."
+        }
+      ]
+    },
+
+    // ALKYNE CONVERSIONS
+    alkyne: {
+      alkane: [
+        {
+          title: "Catalytic Hydrogenation",
+          reaction: chemFormula("RC≡CR' + 2H2 → RCH2-CH2R'"),
+          explanation: "Alkynes are reduced with H2 in presence of Pd/C or Raney Ni catalyst to form alkanes. Requires excess hydrogen for complete reduction."
+        }
+      ],
+      alkene: [
+        {
+          title: "Partial Hydrogenation",
+          reaction: chemFormula("RC≡CR' + H2 → RCH=CHR'"),
+          explanation: "Using Lindlar catalyst (poisoned palladium) with H2 allows selective reduction to cis-alkene. For trans-alkene, sodium in liquid ammonia is used."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Addition of Hydrogen Halide",
+          reaction: chemFormula("HC≡CR + HX → CH2=CXR"),
+          explanation: "Terminal alkynes add one equivalent of hydrogen halide to form vinyl halides."
+        },
+        {
+          title: "Further Addition",
+          reaction: chemFormula("CH2=CXR + HX → CH3-CX2R"),
+          explanation: "Further addition of hydrogen halide forms geminal dihalide."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Hydration",
+          reaction: chemFormula("RC≡CH + H2O + H^+ + Hg^2+ → RCOCH3"),
+          explanation: "Terminal alkynes undergo hydration with mercuric sulfate catalyst and water to form methyl ketones via keto-enol tautomerism."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCOCH3 + NaBH4 → RCH(OH)CH3"),
+          explanation: "Reduce ketone to secondary alcohol using sodium borohydride."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Partial Hydrogenation",
+          reaction: chemFormula("RC≡CH + H2 → RCH=CH2"),
+          explanation: "First, reduce to terminal alkene using Lindlar catalyst."
+        },
+        {
+          title: "Ozonolysis",
+          reaction: chemFormula("RCH=CH2 + O3 → RCHO + HCHO"),
+          explanation: "Ozonolysis of alkene followed by reductive workup forms aldehyde."
+        }
+      ],
+      ketone: [
+        {
+          title: "Hydration",
+          reaction: chemFormula("RC≡CH + H2O + H^+ + Hg^2+ → RCOCH3"),
+          explanation: "Terminal alkynes undergo hydration with mercuric sulfate catalyst and water to form methyl ketones."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Cleavage and Oxidation",
+          reaction: chemFormula("RC≡CR' + KMnO4 + OH^- → RCOOH + R'COOH"),
+          explanation: "Alkynes are cleaved and oxidized with strong oxidants like KMnO4 in basic conditions to form carboxylic acids."
+        }
+      ],
+      ester: [
+        {
+          title: "Cleavage and Oxidation",
+          reaction: chemFormula("RC≡CR' + KMnO4 + OH^- → RCOOH + R'COOH"),
+          explanation: "Oxidize to carboxylic acid with KMnO4."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R''OH + H2SO4 → RCOOR'' + H2O"),
+          explanation: "React carboxylic acid with alcohol in presence of acid catalyst to form ester."
+        }
+      ],
+      amine: [
+        {
+          title: "Partial Hydrogenation",
+          reaction: chemFormula("RC≡CH + H2 → RCH=CH2"),
+          explanation: "First, reduce to terminal alkene using Lindlar catalyst."
+        },
+        {
+          title: "Hydroamination",
+          reaction: chemFormula("RCH=CH2 + NH3 → RCH2CH2NH2"),
+          explanation: "Direct addition of ammonia to alkene using transition metal catalysts."
+        }
+      ],
+      amide: [
+        {
+          title: "Cleavage and Oxidation",
+          reaction: chemFormula("RC≡CR' + KMnO4 + OH^- → RCOOH + R'COOH"),
+          explanation: "Oxidize to carboxylic acid with KMnO4."
+        },
+        {
+          title: "Acid Chloride Formation",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl + SO2 + HCl"),
+          explanation: "Convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Amidation",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2 + NH4Cl"),
+          explanation: "React with excess ammonia to form amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RC≡CH + KMnO4 + OH^- → RCOOH"),
+          explanation: "Oxidize terminal alkyne to carboxylic acid."
+        },
+        {
+          title: "Conversion to Amide",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "Convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Formation of Amide",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2"),
+          explanation: "React with excess ammonia to form amide."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCONH2 + P2O5 → RC≡N + H2O"),
+          explanation: "Dehydrate amide using phosphorus pentoxide to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Partial Hydrogenation",
+          reaction: chemFormula("RC≡CR' + H2 → RCH=CHR'"),
+          explanation: "First, reduce to alkene using Lindlar catalyst."
+        },
+        {
+          title: "Addition of HBr",
+          reaction: chemFormula("RCH=CHR' + HBr → RCH2-CHBrR'"),
+          explanation: "Add HBr to form alkyl bromide."
+        },
+        {
+          title: "Nitrite Substitution",
+          reaction: chemFormula("RCH2-CHBrR' + AgNO2 → RCH2-CH(NO2)R' + AgBr"),
+          explanation: "React alkyl bromide with silver nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // ALKYL HALIDE CONVERSIONS
+    alkylHalide: {
+      alkane: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RX + Zn + H^+ → RH + ZnX2"),
+          explanation: "Alkyl halides are reduced to alkanes using zinc and acid, or with LiAlH4 or NaBH4 in suitable solvents."
+        }
+      ],
+      alkene: [
+        {
+          title: "Dehydrohalogenation",
+          reaction: chemFormula("RCH2-CH2X + KOH → RCH=CH2 + KX + H2O"),
+          explanation: "Treating alkyl halides with strong bases like alcoholic KOH eliminates HX to form alkenes. The reaction follows Zaitsev's rule."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Double Dehydrohalogenation",
+          reaction: chemFormula("RCHBr-CHBrR' + 2KOH → RC≡CR' + 2KBr + 2H2O"),
+          explanation: "Vicinal dihalides undergo double elimination with strong base to form alkynes."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RX + OH^- → ROH + X^-"),
+          explanation: "Alkyl halides undergo SN2 substitution with hydroxide ion to form alcohols. This is a common method for alcohol synthesis."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Formation of Grignard Reagent",
+          reaction: chemFormula("RX + Mg → RMgX"),
+          explanation: "First, prepare Grignard reagent using magnesium in dry ether."
+        },
+        {
+          title: "Reaction with DMF",
+          reaction: chemFormula("RMgX + HC(O)N(CH3)2 → RCHO + MgX(OCH(CH3)2)"),
+          explanation: "React Grignard with dimethylformamide (DMF) to form aldehyde upon hydrolysis."
+        }
+      ],
+      ketone: [
+        {
+          title: "Formation of Grignard Reagent",
+          reaction: chemFormula("RX + Mg → RMgX"),
+          explanation: "First, prepare Grignard reagent using magnesium in dry ether."
+        },
+        {
+          title: "Reaction with Nitrile",
+          reaction: chemFormula("RMgX + R'CN → R'C(=O)R + MgXCN"),
+          explanation: "React Grignard with nitrile to form ketone upon hydrolysis."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Formation of Grignard Reagent",
+          reaction: chemFormula("RX + Mg → RMgX"),
+          explanation: "First, prepare Grignard reagent using magnesium in dry ether."
+        },
+        {
+          title: "Carboxylation",
+          reaction: chemFormula("RMgX + CO2 → RCOO^- MgX^+"),
+          explanation: "React Grignard with carbon dioxide to form magnesium carboxylate."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCOO^- MgX^+ + H3O^+ → RCOOH + Mg^2+ + X^-"),
+          explanation: "Acidify to obtain carboxylic acid."
+        }
+      ],
+      ester: [
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RX + RCOO^- → RCOOR + X^-"),
+          explanation: "Alkyl halides react with carboxylate ions to form esters via SN2 reaction."
+        }
+      ],
+      amine: [
+        {
+          title: "Gabriel Synthesis",
+          reaction: chemFormula("RX + KPhthalimide → RNPhthalimide + KX"),
+          explanation: "React alkyl halide with potassium phthalimide."
+        },
+        {
+          title: "Hydrazinolysis",
+          reaction: chemFormula("RNPhthalimide + N2H4 → RNH2 + Phthalhydrazide"),
+          explanation: "Cleave the phthalimide using hydrazine to liberate primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RX + KCN → RCN + KX"),
+          explanation: "First, substitute halide with cyanide to form nitrile."
+        },
+        {
+          title: "Hydrolysis to Amide",
+          reaction: chemFormula("RCN + H2O + H^+ → RCONH2"),
+          explanation: "Partially hydrolyze nitrile to amide under controlled conditions."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RX + KCN → RCN + KX"),
+          explanation: "Alkyl halides undergo SN2 substitution with cyanide ion to form nitriles (Kolbe nitrile synthesis)."
+        }
+      ],
+      nitro: [
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RX + AgNO2 → RNO2 + AgX"),
+          explanation: "React alkyl halide with silver nitrite to produce nitro compound (Victor Meyer reaction)."
+        }
+      ]
+    },
+
+    // ALCOHOL CONVERSIONS
+    alcohol: {
+      alkane: [
+        {
+          title: "Tosylation",
+          reaction: chemFormula("ROH + TsCl → ROTs + HCl"),
+          explanation: "Convert alcohol to tosylate, a good leaving group."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("ROTs + LiAlH4 → RH + LiAl(OTs)4"),
+          explanation: "Reduce tosylate with LiAlH4 to form alkane."
+        }
+      ],
+      alkene: [
+        {
+          title: "Dehydration",
+          reaction: chemFormula("ROH + H2SO4 → Alkene + H2O"),
+          explanation: "Alcohols undergo dehydration with conc. H2SO4 or POCl3/Pyridine to form alkenes. The reaction follows Zaitsev's rule."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "First, convert primary alcohol to tosylate."
+        },
+        {
+          title: "Elimination with Strong Base",
+          reaction: chemFormula("RCH2OTs + NaNH2 → RC≡CH + NaOTs + NH3"),
+          explanation: "Treat with strong base like sodium amide to form terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Halogenation",
+          reaction: chemFormula("ROH + HX → RX + H2O"),
+          explanation: "Alcohols react with hydrogen halides to form alkyl halides. The order of reactivity is HI > HBr > HCl."
+        },
+        {
+          title: "Alternative Method",
+          reaction: chemFormula("ROH + PBr3 → RBr + H3PO3"),
+          explanation: "Phosphorus tribromide is effective for converting alcohols to alkyl bromides."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCH2OH + PCC → RCHO + Cr-complex"),
+          explanation: "Primary alcohols are oxidized to aldehydes using mild oxidants like PCC (pyridinium chlorochromate) in dichloromethane."
+        }
+      ],
+      ketone: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("R2CHOH + K2Cr2O7/H2SO4 → R2C=O + Cr-complex + H2O"),
+          explanation: "Secondary alcohols are oxidized to ketones using oxidizing agents like potassium dichromate in sulfuric acid."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCH2OH + KMnO4 → RCOOH + MnO2 + KOH"),
+          explanation: "Primary alcohols are oxidized to carboxylic acids using strong oxidizing agents like potassium permanganate or potassium dichromate."
+        }
+      ],
+      ester: [
+        {
+          title: "Fischer Esterification",
+          reaction: chemFormula("R'OH + RCOOH + H^+ → RCOOR' + H2O"),
+          explanation: "Alcohols react with carboxylic acids in presence of acid catalyst to form esters (Fischer esterification)."
+        }
+      ],
+      amine: [
+        {
+          title: "Tosylation",
+          reaction: chemFormula("ROH + TsCl → ROTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("ROTs + NH3 → RNH2 + HOTs"),
+          explanation: "Displace tosylate with ammonia to form primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Oxidation to Acid",
+          reaction: chemFormula("RCH2OH + KMnO4 → RCOOH"),
+          explanation: "First, oxidize primary alcohol to carboxylic acid."
+        },
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "Convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Amidation",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2 + NH4Cl"),
+          explanation: "React with excess ammonia to form amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Tosylation",
+          reaction: chemFormula("ROH + TsCl → ROTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Cyanide Substitution",
+          reaction: chemFormula("ROTs + KCN → RCN + KOTs"),
+          explanation: "Displace tosylate with cyanide to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Tosylation",
+          reaction: chemFormula("ROH + TsCl → ROTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("ROTs + NaNO2 → RNO2 + NaOTs"),
+          explanation: "Displace tosylate with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // ALDEHYDE CONVERSIONS
+    aldehyde: {
+      alkane: [
+        {
+          title: "Wolff-Kishner Reduction",
+          reaction: chemFormula("RCHO + N2H4 → RCH=NNH2"),
+          explanation: "First, form hydrazone using hydrazine."
+        },
+        {
+          title: "Decomposition",
+          reaction: chemFormula("RCH=NNH2 + KOH → RCH3 + N2"),
+          explanation: "Heat with strong base to form alkane with loss of nitrogen."
+        }
+      ],
+      alkene: [
+        {
+          title: "Wittig Reaction",
+          reaction: chemFormula("RCHO + Ph3P=CH2 → RCH=CH2 + Ph3PO"),
+          explanation: "Aldehydes react with phosphorus ylides to form alkenes. This is a reliable method for C=C bond formation."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Corey-Fuchs Reaction Step 1",
+          reaction: chemFormula("RCHO + CBr4 + PPh3 → RCHBr2 + Ph3PO + Ph3P=CBr2"),
+          explanation: "First, convert aldehyde to dibromoalkene using CBr4 and PPh3."
+        },
+        {
+          title: "Corey-Fuchs Reaction Step 2",
+          reaction: chemFormula("RCHBr2 + 2 n-BuLi → RC≡C^- Li^+ + 2LiBr"),
+          explanation: "Treat dibromoalkene with strong base to form terminal alkyne after protonation."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCHO + NaBH4 → RCH2OH"),
+          explanation: "First, reduce aldehyde to primary alcohol."
+        },
+        {
+          title: "Halogenation",
+          reaction: chemFormula("RCH2OH + SOCl2 → RCH2Cl + SO2 + HCl"),
+          explanation: "Convert alcohol to alkyl halide using thionyl chloride."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCHO + NaBH4 → RCH2OH"),
+          explanation: "Aldehydes are reduced to primary alcohols using NaBH4 in methanol or LiAlH4 in THF."
+        }
+      ],
+      ketone: [
+        {
+          title: "Grignard Addition",
+          reaction: chemFormula("RCHO + R'MgX → RCH(OH)R'"),
+          explanation: "First, add Grignard reagent to form secondary alcohol."
+        },
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCH(OH)R' + PCC → RC(=O)R'"),
+          explanation: "Oxidize secondary alcohol to ketone using PCC."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCHO + KMnO4 → RCOOH + MnO2 + KOH"),
+          explanation: "Aldehydes are easily oxidized to carboxylic acids using strong oxidizers like KMnO4 or K2Cr2O7."
+        }
+      ],
+      ester: [
+        {
+          title: "Oxidation to Acid",
+          reaction: chemFormula("RCHO + KMnO4 → RCOOH"),
+          explanation: "First, oxidize aldehyde to carboxylic acid."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Perform acid-catalyzed esterification with alcohol."
+        }
+      ],
+      amine: [
+        {
+          title: "Reductive Amination",
+          reaction: chemFormula("RCHO + NH3 → RCH=NH"),
+          explanation: "First, form imine from aldehyde and ammonia."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCH=NH + NaBH4 → RCH2NH2"),
+          explanation: "Reduce imine with sodium borohydride to form primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Oxidation to Acid",
+          reaction: chemFormula("RCHO + KMnO4 → RCOOH"),
+          explanation: "First, oxidize aldehyde to carboxylic acid."
+        },
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "Convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Amidation",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2 + NH4Cl"),
+          explanation: "React with excess ammonia to form amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Oxidation to Acid",
+          reaction: chemFormula("RCHO + KMnO4 → RCOOH"),
+          explanation: "First, oxidize aldehyde to carboxylic acid."
+        },
+        {
+          title: "Conversion to Amide",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "Convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Formation of Amide",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2"),
+          explanation: "React with excess ammonia to form amide."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCONH2 + P2O5 → RCN + H2O"),
+          explanation: "Dehydrate amide using phosphorus pentoxide to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Conversion to Oxime",
+          reaction: chemFormula("RCHO + NH2OH·HCl → RCH=NOH + H2O + HCl"),
+          explanation: "First, convert to oxime using hydroxylamine hydrochloride."
+        },
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCH=NOH + KMnO4 → RNO2 + H2O + MnO2 + KOH"),
+          explanation: "Oxidize oxime to nitro compound using potassium permanganate."
+        }
+      ]
+    },
+
+    // KETONE CONVERSIONS
+    ketone: {
+      alkane: [
+        {
+          title: "Wolff-Kishner Reduction",
+          reaction: chemFormula("R2C=O + H2NNH2 → R2C=NNH2"),
+          explanation: "First, form hydrazone using hydrazine."
+        },
+        {
+          title: "Decomposition",
+          reaction: chemFormula("R2C=NNH2 + KOH → R2CH2 + N2"),
+          explanation: "Heat with strong base to form alkane with loss of nitrogen."
+        }
+      ],
+      alkene: [
+        {
+          title: "Wittig Reaction",
+          reaction: chemFormula("R2C=O + Ph3P=CH2 → R2C=CH2 + Ph3PO"),
+          explanation: "Ketones react with phosphorus ylides to form alkenes with high regioselectivity."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Formation of Vinyl Triflate",
+          reaction: chemFormula("R2C=O + LHMDS → R2C(OLi)CH → R2C=CH(OTf)"),
+          explanation: "First, form enolate then triflate to create vinyl group."
+        },
+        {
+          title: "Elimination",
+          reaction: chemFormula("R2C=CH(OTf) + NaNH2 → R2C≡CH + NaOTf + NH3"),
+          explanation: "Elimination of triflate using strong base to form alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("R2C=O + NaBH4 → R2CHOH"),
+          explanation: "First, reduce to secondary alcohol."
+        },
+        {
+          title: "Halogenation",
+          reaction: chemFormula("R2CHOH + HBr → R2CHBr + H2O"),
+          explanation: "Convert alcohol to alkyl halide using hydrogen bromide."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("R2C=O + NaBH4 → R2CHOH"),
+          explanation: "Ketones are reduced to secondary alcohols using NaBH4 or LiAlH4."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("R2C=O + NaBH4 → R2CHOH"),
+          explanation: "First, reduce ketone to secondary alcohol."
+        },
+        {
+          title: "Oxidative Cleavage",
+          reaction: chemFormula("R2CHOH + HIO4 → RCHO + R'CHO"),
+          explanation: "Oxidative cleavage of secondary alcohol to form two aldehydes."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Haloform Reaction",
+          reaction: chemFormula("RCOCH3 + X2 + OH^- → RCOO^- + CHX3"),
+          explanation: "Methyl ketones undergo haloform reaction with X2 (Cl2, Br2, I2) in base to give carboxylates."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCOO^- + H^+ → RCOOH"),
+          explanation: "Acidify to obtain carboxylic acid."
+        }
+      ],
+      ester: [
+        {
+          title: "Baeyer-Villiger Oxidation",
+          reaction: chemFormula("R2C=O + MCPBA → RCOOCH2R'"),
+          explanation: "Ketones are oxidized to esters using peroxy acids like meta-chloroperbenzoic acid (MCPBA)."
+        }
+      ],
+            amine: [
+        {
+          title: "Reductive Amination",
+          reaction: chemFormula("R2C=O + NH3 → R2C=NH"),
+          explanation: "First, form imine from ketone and ammonia."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("R2C=NH + NaBH4 → R2CHNH2"),
+          explanation: "Reduce imine with sodium borohydride to form primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Beckmann Rearrangement",
+          reaction: chemFormula("R2C=O + NH2OH → R2C=NOH"),
+          explanation: "First, convert ketone to oxime using hydroxylamine."
+        },
+        {
+          title: "Rearrangement",
+          reaction: chemFormula("R2C=NOH + H2SO4 → RCONHR'"),
+          explanation: "Treat oxime with acid catalyst to induce Beckmann rearrangement, forming amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Conversion to Oxime",
+          reaction: chemFormula("R2C=O + NH2OH → R2C=NOH"),
+          explanation: "First, convert ketone to oxime using hydroxylamine."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("R2C=NOH + SOCl2 → R2C≡N + SO2 + HCl"),
+          explanation: "Dehydrate oxime using thionyl chloride to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "α-Nitration",
+          reaction: chemFormula("R2C=O + HNO3 → R2C(NO2)OH"),
+          explanation: "Ketones undergo nitration at alpha position using nitric acid in acidic conditions."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("R2C(NO2)OH → R2C=CHNO2"),
+          explanation: "Dehydration forms nitroalkene."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("R2C=CHNO2 + NaBH4 → R2CHCH2NO2"),
+          explanation: "Reduce the double bond to form nitroalkane."
+        }
+      ]
+    },
+
+    // CARBOXYLIC ACID CONVERSIONS
+    carboxylicAcid: {
+      alkane: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl + SO2 + HCl"),
+          explanation: "First, convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Reduction with LiAlH4",
+          reaction: chemFormula("RCOCl + LiAlH4 → RCH3 + LiAlCl4"),
+          explanation: "Reduce acid chloride completely to alkane using strong reducing agent."
+        }
+      ],
+      alkene: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "First, form acid chloride using thionyl chloride."
+        },
+        {
+          title: "Reduction to Aldehyde",
+          reaction: chemFormula("RCOCl + DIBAL-H → RCHO"),
+          explanation: "Reduce to aldehyde using controlled DIBAL-H reduction."
+        },
+        {
+          title: "Wittig Reaction",
+          reaction: chemFormula("RCHO + Ph3P=CH2 → RCH=CH2 + Ph3PO"),
+          explanation: "Convert aldehyde to terminal alkene via Wittig reaction."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "First, convert to acid chloride."
+        },
+        {
+          title: "Reduction to Aldehyde",
+          reaction: chemFormula("RCOCl + DIBAL-H → RCHO"),
+          explanation: "Reduce to aldehyde using controlled DIBAL-H reduction."
+        },
+        {
+          title: "Corey-Fuchs Reaction",
+          reaction: chemFormula("RCHO + PPh3 + CBr4 → RCBr2=CH2"),
+          explanation: "Convert aldehyde to dibromoalkene via Corey-Fuchs reaction."
+        },
+        {
+          title: "Elimination",
+          reaction: chemFormula("RCBr2=CH2 + n-BuLi → RC≡CH"),
+          explanation: "Dehydrobrominate with strong base to form terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Hunsdiecker Reaction",
+          reaction: chemFormula("RCOOAg + Br2 → RBr + CO2 + AgBr"),
+          explanation: "Convert to silver salt and then treat with bromine to form alkyl bromide with loss of CO2."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCOOH + LiAlH4 → RCH2OH + Li, Al salts"),
+          explanation: "Carboxylic acids are reduced to primary alcohols using strong reducing agents like LiAlH4."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "First, convert to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Controlled Reduction",
+          reaction: chemFormula("RCOCl + DIBAL-H → RCHO"),
+          explanation: "Reduce acid chloride to aldehyde using DIBAL-H at low temperature."
+        }
+      ],
+      ketone: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "First, convert to acid chloride."
+        },
+        {
+          title: "Organocadmium Reaction",
+          reaction: chemFormula("RCOCl + R'2Cd → RCOR' + CdClR'"),
+          explanation: "React with dialkylcadmium to form ketone, as organocadmium reagents are less reactive than Grignard."
+        }
+      ],
+      ester: [
+        {
+          title: "Fischer Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Carboxylic acids react with alcohols in presence of acid catalyst to form esters."
+        }
+      ],
+      amine: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOH + LiAlH4 → RCH2OH"),
+          explanation: "First, reduce carboxylic acid to alcohol."
+        },
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Nucleophilic Substitution",
+          reaction: chemFormula("RCH2OTs + NH3 → RCH2NH2 + HOTs"),
+          explanation: "Displace tosylate with ammonia to form primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Conversion to Acid Chloride",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl + SO2 + HCl"),
+          explanation: "First, convert acid to acid chloride using thionyl chloride."
+        },
+        {
+          title: "Amidation",
+          reaction: chemFormula("RCOCl + 2NH3 → RCONH2 + NH4Cl"),
+          explanation: "React acid chloride with excess ammonia to form primary amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Conversion to Amide",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "First, convert to acid chloride."
+        },
+        {
+          title: "Amide Formation",
+          reaction: chemFormula("RCOCl + NH3 → RCONH2"),
+          explanation: "React with ammonia to form amide."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCONH2 + P2O5 → RCN + H2O"),
+          explanation: "Dehydrate amide using phosphorus pentoxide to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOH + LiAlH4 → RCH2OH"),
+          explanation: "First, reduce carboxylic acid to primary alcohol."
+        },
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Nitrite Substitution",
+          reaction: chemFormula("RCH2OTs + NaNO2 → RCH2NO2 + NaOTs"),
+          explanation: "Displace tosylate with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // ESTER CONVERSIONS
+    ester: {
+      alkane: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCOOR' + NaOH → RCOONa + R'OH"),
+          explanation: "First, hydrolyze ester to carboxylate salt."
+        },
+        {
+          title: "Decarboxylation",
+          reaction: chemFormula("RCOONa + NaOH/CaO → RH + Na2CO3"),
+          explanation: "Heat sodium carboxylate with soda lime (NaOH/CaO) to form alkane via decarboxylation."
+        }
+      ],
+      alkene: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH + R'OH"),
+          explanation: "First, reduce ester to primary alcohol."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCH2OH + H2SO4 → RCH=CH2 + H2O"),
+          explanation: "Dehydrate alcohol using sulfuric acid to form alkene."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH"),
+          explanation: "First, reduce ester to primary alcohol."
+        },
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Elimination",
+          reaction: chemFormula("RCH2OTs + NaNH2 → RC≡CH + NaOTs + NH3"),
+          explanation: "Treat with strong base like sodium amide to form terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH"),
+          explanation: "First, reduce ester to primary alcohol."
+        },
+        {
+          title: "Halogenation",
+          reaction: chemFormula("RCH2OH + PBr3 → RCH2Br + H3PO3"),
+          explanation: "Convert alcohol to alkyl halide using phosphorus tribromide."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH + R'OH"),
+          explanation: "Esters are reduced to primary alcohols (from acid component) and alcohols (from alcohol component) using LiAlH4."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Controlled Reduction",
+          reaction: chemFormula("RCOOR' + DIBAL-H → RCHO + R'OH"),
+          explanation: "Esters are reduced to aldehydes using DIBAL-H at low temperature (-78°C) in controlled conditions."
+        }
+      ],
+      ketone: [
+        {
+          title: "Reaction with Organometallic",
+          reaction: chemFormula("RCOOR' + 2R''MgBr → R''RCOR'' + R'OMgBr + MgBr2"),
+          explanation: "Esters react with excess Grignard reagent to form tertiary alcohols, which can be oxidized to ketones."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCOOR' + NaOH → RCOONa + R'OH"),
+          explanation: "Esters undergo alkaline hydrolysis with NaOH to form carboxylate salts."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCOONa + HCl → RCOOH + NaCl"),
+          explanation: "Acidify the salt to obtain carboxylic acid."
+        }
+      ],
+      amine: [
+        {
+          title: "Reduction with LiAlH4",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH + R'OH"),
+          explanation: "First, reduce ester to primary alcohol."
+        },
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Amination",
+          reaction: chemFormula("RCH2OTs + NH3 → RCH2NH2 + HOTs"),
+          explanation: "Displace tosylate with ammonia to form primary amine."
+        }
+      ],
+      amide: [
+        {
+          title: "Ammonolysis",
+          reaction: chemFormula("RCOOR' + NH3 → RCONH2 + R'OH"),
+          explanation: "Esters react with ammonia to form amides. This reaction occurs at elevated temperature and pressure or over time at room temperature."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCOOR' + NaOH → RCOONa + R'OH"),
+          explanation: "First, hydrolyze ester to carboxylate salt."
+        },
+        {
+          title: "Conversion to Amide",
+          reaction: chemFormula("RCOONa + H^+ → RCOOH"),
+          explanation: "Acidify to form carboxylic acid."
+        },
+        {
+          title: "Acid Chloride Formation",
+          reaction: chemFormula("RCOOH + SOCl2 → RCOCl"),
+          explanation: "Convert to acid chloride."
+        },
+        {
+          title: "Amide Formation",
+          reaction: chemFormula("RCOCl + NH3 → RCONH2"),
+          explanation: "React with ammonia to form amide."
+        },
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCONH2 + P2O5 → RCN + H2O"),
+          explanation: "Dehydrate amide to form nitrile."
+        }
+      ],
+      nitro: [
+        {
+          title: "Reduction to Alcohol",
+          reaction: chemFormula("RCOOR' + LiAlH4 → RCH2OH"),
+          explanation: "First, reduce ester to primary alcohol."
+        },
+        {
+          title: "Tosylation",
+          reaction: chemFormula("RCH2OH + TsCl → RCH2OTs"),
+          explanation: "Convert alcohol to tosylate."
+        },
+        {
+          title: "Nitrite Substitution",
+          reaction: chemFormula("RCH2OTs + NaNO2 → RCH2NO2 + NaOTs"),
+          explanation: "Displace tosylate with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // AMINE CONVERSIONS
+    amine: {
+      alkane: [
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RNH2 + CH3I (excess) → RN(CH3)3^+ I^-"),
+          explanation: "First, form quaternary ammonium salt via exhaustive methylation."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RN(CH3)3^+ OH^- → R(H)C=CH2 + N(CH3)3 + H2O"),
+          explanation: "Quaternary ammonium hydroxide undergoes elimination to form alkene."
+        },
+        {
+          title: "Hydrogenation",
+          reaction: chemFormula("R(H)C=CH2 + H2/Pd → RCH2CH3"),
+          explanation: "Hydrogenate alkene to form alkane."
+        }
+      ],
+      alkene: [
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RNH2 + CH3I (excess) → RN(CH3)3^+ I^-"),
+          explanation: "First, form quaternary ammonium salt via exhaustive methylation."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RN(CH3)3^+ OH^- → R(H)C=CH2 + N(CH3)3 + H2O"),
+          explanation: "Quaternary ammonium hydroxide undergoes elimination to form alkene when heated."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Hofmann Elimination to Alkene",
+          reaction: chemFormula("RCH2CH2NH2 + CH3I (excess) → RCH2CH2N(CH3)3^+ I^-"),
+          explanation: "First, form quaternary ammonium salt."
+        },
+        {
+          title: "First Elimination",
+          reaction: chemFormula("RCH2CH2N(CH3)3^+ OH^- → RCH=CH2 + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        },
+        {
+          title: "Bromination",
+          reaction: chemFormula("RCH=CH2 + Br2 → RCHBrCH2Br"),
+          explanation: "Add bromine to form dibromide."
+        },
+        {
+          title: "Double Dehydrohalogenation",
+          reaction: chemFormula("RCHBrCH2Br + 2KOH → RC≡CH + 2KBr + 2H2O"),
+          explanation: "Eliminate HBr twice using strong base to form alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt using nitrous acid."
+        },
+        {
+          title: "Sandmeyer Reaction",
+          reaction: chemFormula("RN2^+ + CuCl/CuBr/KI → RCl/RBr/RI + N2"),
+          explanation: "Substitute diazonium with halide using copper catalysts (Sandmeyer reaction)."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt using nitrous acid (NaNO2 + HCl)."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RN2^+ + H2O → ROH + N2 + H^+"),
+          explanation: "Hydrolyze diazonium salt by heating in water to form alcohol."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Oxidative Deamination",
+          reaction: chemFormula("RCH2NH2 + [O] → RCHO + NH3"),
+          explanation: "Primary amines can be oxidized to aldehydes using oxidizing agents like potassium permanganate or hydrogen peroxide."
+        }
+      ],
+      ketone: [
+        {
+          title: "Oxidation of Secondary Amine",
+          reaction: chemFormula("R2CHNH2 + [O] → R2C=O + NH3"),
+          explanation: "Secondary amines can be oxidized to ketones using oxidizing agents like potassium dichromate."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt using nitrous acid."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RN2^+ + H2O/CuCN → RCOOH + N2 + H^+"),
+          explanation: "Treat diazonium salt with water and copper cyanide to form carboxylic acid."
+        }
+      ],
+      ester: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt."
+        },
+        {
+          title: "Hydrolysis to Alcohol",
+          reaction: chemFormula("RN2^+ + H2O → ROH + N2 + H^+"),
+          explanation: "Hydrolyze to form alcohol."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("ROH + R'COOH + H^+ → ROCOR' + H2O"),
+          explanation: "React alcohol with carboxylic acid to form ester."
+        }
+      ],
+      amide: [
+        {
+          title: "Acylation",
+          reaction: chemFormula("RNH2 + R'COCl → RNHCOR' + HCl"),
+          explanation: "Amines react with acid chlorides or anhydrides to form amides. Pyridine is often used as base to neutralize HCl."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt."
+        },
+        {
+          title: "Sandmeyer Reaction",
+          reaction: chemFormula("RN2^+ + CuCN → RCN + N2"),
+          explanation: "Replace diazonium with cyanide using copper cyanide (Sandmeyer reaction)."
+        }
+      ],
+      nitro: [
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+ + H2O"),
+          explanation: "First, convert amine to diazonium salt."
+        },
+        {
+          title: "Substitution",
+          reaction: chemFormula("RN2^+ + NaNO2 → RNO2 + N2 + Na^+"),
+          explanation: "Replace diazonium with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // AMIDE CONVERSIONS
+    amide: {
+      alkane: [
+        {
+          title: "Reduction with LiAlH4",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce amide to amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RCH2NH2 + CH3I (excess) → RCH2N(CH3)3^+ I^-"),
+          explanation: "Convert to quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RCH2N(CH3)3^+ OH^- → RCH=CH2 + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        },
+        {
+          title: "Hydrogenation",
+          reaction: chemFormula("RCH=CH2 + H2/Pd → RCH2CH3"),
+          explanation: "Reduce alkene to alkane."
+        }
+      ],
+      alkene: [
+        {
+          title: "Reduction with LiAlH4",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce amide to amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RCH2NH2 + CH3I (excess) → RCH2N(CH3)3^+ I^-"),
+          explanation: "Convert to quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RCH2N(CH3)3^+ OH^- → RCH=CH2 + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce amide to amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+"),
+          explanation: "Form diazonium salt."
+        },
+        {
+          title: "CuCN Substitution",
+          reaction: chemFormula("RCH2N2^+ + CuCN → RCH2CN + N2"),
+          explanation: "Convert to nitrile via Sandmeyer reaction."
+        },
+        {
+          title: "Base Treatment",
+          reaction: chemFormula("RCH2CN + NaNH2 → RC≡C^- Na^+ + NH3"),
+          explanation: "Deprotonate α to nitrile with strong base."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RC≡C^- Na^+ + H2O → RC≡CH + NaOH"),
+          explanation: "Hydrolyze to terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCONH2 + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "First, hydrolyze amide to carboxylic acid."
+        },
+        {
+          title: "Decarboxylation with Halogen",
+          reaction: chemFormula("RCOOH + Br2 + PBr3 → RBr + CO2 + HBr"),
+          explanation: "Hunsdiecker-type reaction of acid to form alkyl bromide."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2 + LiAlO2"),
+          explanation: "First, reduce amide to amine using LiAlH4."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+ + H2O"),
+          explanation: "Convert amine to diazonium salt using nitrous acid."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCH2N2^+ + H2O → RCH2OH + N2 + H^+"),
+          explanation: "Hydrolyze diazonium salt to alcohol."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Controlled Reduction",
+          reaction: chemFormula("RCONH2 + DIBAL-H → RCHO + H2NAliBu2"),
+          explanation: "Amides can be reduced to aldehydes using DIBAL-H at low temperature (-78°C) in controlled conditions."
+        }
+      ],
+      ketone: [
+        {
+          title: "Partial Reduction",
+          reaction: chemFormula("RCONH2 + DIBAL-H → RCH=NOAl(iBu)2"),
+          explanation: "First, form imine aluminum complex."
+        },
+        {
+          title: "Grignard Addition",
+          reaction: chemFormula("RCH=NOAl(iBu)2 + R'MgX → RCH(R')=NOAl(iBu)2"),
+          explanation: "Add Grignard to imine complex."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCH(R')=NOAl(iBu)2 + H2O → RCOR' + NH3"),
+          explanation: "Hydrolyze to form ketone."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCONH2 + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "Amides are hydrolyzed to carboxylic acids using acid or base catalysis with water."
+        }
+      ],
+      ester: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCONH2 + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "First, hydrolyze to carboxylic acid."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Convert acid to ester via Fischer esterification."
+        }
+      ],
+      amine: [
+        {
+          title: "Reduction with LiAlH4",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2 + LiAlO2"),
+          explanation: "Amides are reduced to amines using strong reducing agents like LiAlH4."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Dehydration",
+          reaction: chemFormula("RCONH2 + P2O5 → RC≡N + H2O"),
+          explanation: "Amides are dehydrated to nitriles using dehydrating agents like P2O5, SOCl2, or POCl3."
+        }
+      ],
+      nitro: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RCONH2 + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce amide to amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+"),
+          explanation: "Form diazonium salt."
+        },
+        {
+          title: "Nitrite Substitution",
+          reaction: chemFormula("RCH2N2^+ + NaNO2 → RCH2NO2 + N2 + Na^+"),
+          explanation: "Replace diazonium with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // NITRILE CONVERSIONS
+    nitrile: {
+      alkane: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce nitrile to primary amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RCH2NH2 + CH3I (excess) → RCH2N(CH3)3^+ I^-"),
+          explanation: "Form quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RCH2N(CH3)3^+ OH^- → RCH=CH2 + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        },
+        {
+          title: "Hydrogenation",
+          reaction: chemFormula("RCH=CH2 + H2/Pd → RCH2CH3"),
+          explanation: "Reduce alkene to alkane."
+        }
+      ],
+      alkene: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce nitrile to primary amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RCH2NH2 + CH3I (excess) → RCH2N(CH3)3^+ I^-"),
+          explanation: "Form quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RCH2N(CH3)3^+ OH^- → RCH=CH2 + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Base Treatment",
+          reaction: chemFormula("RCH2CN + NaNH2 → RC≡C^- Na^+ + NH3"),
+          explanation: "Deprotonate α to nitrile with strong base."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RC≡C^- Na^+ + H2O → RC≡CH + NaOH"),
+          explanation: "Hydrolyze to terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce nitrile to primary amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+ + H2O"),
+          explanation: "Convert amine to diazonium salt."
+        },
+        {
+          title: "Sandmeyer Reaction",
+          reaction: chemFormula("RCH2N2^+ + CuCl/CuBr → RCH2Cl/RCH2Br + N2"),
+          explanation: "Replace diazonium with halide using Sandmeyer reaction."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce nitrile to primary amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+ + H2O"),
+          explanation: "Convert amine to diazonium salt."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCH2N2^+ + H2O → RCH2OH + N2 + H^+"),
+          explanation: "Hydrolyze diazonium salt to alcohol."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Partial Reduction",
+          reaction: chemFormula("RC≡N + DIBAL-H → RCH=NH"),
+          explanation: "Nitriles are reduced to imines using DIBAL-H at low temperature."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RCH=NH + H2O → RCHO + NH3"),
+          explanation: "Hydrolyze imine to form aldehyde."
+        }
+      ],
+      ketone: [
+        {
+          title: "Grignard Reaction",
+          reaction: chemFormula("RC≡N + R'MgX → RC(=NMgX)R'"),
+          explanation: "Add Grignard reagent to nitrile to form imine magnesium complex."
+        },
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RC(=NMgX)R' + H2O → RCOR' + NH3 + Mg(OH)X"),
+          explanation: "Hydrolyze complex to form ketone."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Hydrolysis",
+          reaction: chemFormula("RC≡N + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "Nitriles are hydrolyzed to carboxylic acids using acid or base catalysis with water."
+        }
+      ],
+      ester: [
+        {
+          title: "Hydrolysis to Acid",
+          reaction: chemFormula("RC≡N + H2O + H^+ → RCOOH + NH4^+"),
+          explanation: "First, hydrolyze to carboxylic acid."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Convert acid to ester via Fischer esterification."
+        }
+      ],
+      amine: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2 + Li, Al salts"),
+          explanation: "Nitriles are reduced to primary amines using strong reducing agents like LiAlH4."
+        },
+        {
+          title: "Alternative",
+          reaction: chemFormula("RC≡N + H2/Ni → RCH2NH2"),
+          explanation: "Catalytic hydrogenation can also be used with nickel catalyst."
+        }
+      ],
+      amide: [
+        {
+          title: "Partial Hydrolysis",
+          reaction: chemFormula("RC≡N + H2O + H^+ → RCONH2"),
+          explanation: "Nitriles are partially hydrolyzed to amides under controlled acidic or basic conditions with water."
+        }
+      ],
+      nitro: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RC≡N + LiAlH4 → RCH2NH2"),
+          explanation: "First, reduce nitrile to primary amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RCH2NH2 + HNO2 → RCH2N2^+"),
+          explanation: "Form diazonium salt."
+        },
+        {
+          title: "Nitrite Substitution",
+          reaction: chemFormula("RCH2N2^+ + NaNO2 → RCH2NO2 + N2 + Na^+"),
+          explanation: "Replace diazonium with nitrite to form nitro compound."
+        }
+      ]
+    },
+
+    // NITRO COMPOUND CONVERSIONS
+    nitro: {
+      alkane: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RNO2 + H2/Ni → RNH2"),
+          explanation: "First, reduce nitro compound to amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RNH2 + CH3I (excess) → RN(CH3)3^+ I^-"),
+          explanation: "Form quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RN(CH3)3^+ OH^- → Alkene + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        },
+        {
+          title: "Hydrogenation",
+          reaction: chemFormula("Alkene + H2/Pd → Alkane"),
+          explanation: "Reduce alkene to alkane."
+        }
+      ],
+      alkene: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RNO2 + H2/Ni → RNH2"),
+          explanation: "First, reduce nitro compound to amine."
+        },
+        {
+          title: "Exhaustive Methylation",
+          reaction: chemFormula("RNH2 + CH3I (excess) → RN(CH3)3^+ I^-"),
+          explanation: "Form quaternary ammonium salt."
+        },
+        {
+          title: "Hofmann Elimination",
+          reaction: chemFormula("RN(CH3)3^+ OH^- → Alkene + N(CH3)3 + H2O"),
+          explanation: "Form alkene via Hofmann elimination."
+        }
+      ],
+      alkyne: [
+        {
+          title: "Nef Reaction",
+          reaction: chemFormula("RCH2NO2 + Base → RCH=NO2^-"),
+          explanation: "First, form nitronate ion using base."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCH=NO2^- + H^+ → RCHO + HNO2"),
+          explanation: "Acidify to give aldehyde via Nef reaction."
+        },
+        {
+          title: "Corey-Fuchs Reaction",
+          reaction: chemFormula("RCHO + PPh3/CBr4 → RCHBr2"),
+          explanation: "Convert aldehyde to dibromoalkene."
+        },
+        {
+          title: "Elimination",
+          reaction: chemFormula("RCHBr2 + n-BuLi → RC≡CH"),
+          explanation: "Dehydrobrominate to form terminal alkyne."
+        }
+      ],
+      alkylHalide: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RNO2 + H2/Ni → RNH2"),
+          explanation: "First, reduce nitro compound to amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+"),
+          explanation: "Form diazonium salt."
+        },
+        {
+          title: "Sandmeyer Reaction",
+          reaction: chemFormula("RN2^+ + CuCl/CuBr → RCl/RBr + N2"),
+          explanation: "Replace diazonium with halide using Sandmeyer reaction."
+        }
+      ],
+      alcohol: [
+        {
+          title: "Nef Reaction",
+          reaction: chemFormula("RCH2NO2 + NaOH → RCH=NO2^- Na^+"),
+          explanation: "First, form nitronate salt using base."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCH=NO2^- Na^+ + H2SO4 → RCHO + NaHSO4 + HNO2"),
+          explanation: "Acidify to give aldehyde via Nef reaction."
+        },
+        {
+          title: "Reduction",
+          reaction: chemFormula("RCHO + NaBH4 → RCH2OH"),
+          explanation: "Reduce aldehyde to primary alcohol."
+        }
+      ],
+      aldehyde: [
+        {
+          title: "Nef Reaction",
+          reaction: chemFormula("RCH2NO2 + NaOH → RCH=NO2^- Na^+"),
+          explanation: "Form nitronate salt using base."
+        },
+        {
+          title: "Acidification",
+          reaction: chemFormula("RCH=NO2^- Na^+ + H2SO4 → RCHO + NaHSO4 + HNO2"),
+          explanation: "Acidify to give aldehyde via Nef reaction."
+        }
+      ],
+      ketone: [
+        {
+          title: "Michael Addition",
+          reaction: chemFormula("CH3NO2 + R2C=CHCOR' → R2C(CH2NO2)CH2COR'"),
+          explanation: "First, perform Michael addition of nitromethane to α,β-unsaturated ketone."
+        },
+        {
+          title: "Nef Reaction",
+          reaction: chemFormula("R2C(CH2NO2)CH2COR' → R2CHCH2COR' + products"),
+          explanation: "Convert nitro group to carbonyl via Nef reaction."
+        }
+      ],
+      carboxylicAcid: [
+        {
+          title: "Oxidation",
+          reaction: chemFormula("RCH2NO2 + KMnO4 → RCOOH + products"),
+          explanation: "Oxidize nitroalkane to carboxylic acid using strong oxidizing agent."
+        }
+      ],
+      ester: [
+        {
+          title: "Oxidation to Acid",
+          reaction: chemFormula("RCH2NO2 + KMnO4 → RCOOH + products"),
+          explanation: "First, oxidize to carboxylic acid."
+        },
+        {
+          title: "Esterification",
+          reaction: chemFormula("RCOOH + R'OH + H2SO4 → RCOOR' + H2O"),
+          explanation: "Convert acid to ester via Fischer esterification."
+        }
+      ],
+      amine: [
+        {
+          title: "Reduction",
+          reaction: chemFormula("RNO2 + Fe/HCl → RNH2"),
+          explanation: "Nitro compounds are reduced to amines using reducing agents like Fe/HCl, Zn/HCl, or H2/Ni."
+        },
+        {
+          title: "Alternative",
+          reaction: chemFormula("RNO2 + Sn/HCl → RNH2"),
+          explanation: "Tin and hydrochloric acid is another effective reducing system."
+        }
+      ],
+      amide: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RNO2 + H2/Ni → RNH2"),
+          explanation: "First, reduce nitro compound to amine."
+        },
+        {
+          title: "Acylation",
+          reaction: chemFormula("RNH2 + R'COCl → RNHCOR' + HCl"),
+          explanation: "React amine with acid chloride to form amide."
+        }
+      ],
+      nitrile: [
+        {
+          title: "Reduction to Amine",
+          reaction: chemFormula("RNO2 + H2/Ni → RNH2"),
+          explanation: "First, reduce nitro compound to amine."
+        },
+        {
+          title: "Diazotization",
+          reaction: chemFormula("RNH2 + HNO2 → RN2^+"),
+          explanation: "Form diazonium salt."
+        },
+        {
+          title: "Cyanation",
+          reaction: chemFormula("RN2^+ + CuCN → RCN + N2"),
+          explanation: "Replace diazonium with cyanide using copper cyanide."
+        }
+      ]
+    }
+  };
+
+  // Function to display the conversion steps based on selection
+  function showConversion() {
+    document.getElementById("conversionResult").innerHTML = `<div class="loading">Loading conversion steps...</div>`;
+    
+    // Timeout to show the loading effect (makes the app feel more interactive)
+    setTimeout(() => {
+      const start = document.getElementById("fgStart").value;
+      const target = document.getElementById("fgTarget").value;
+      const container = document.getElementById("conversionResult");
+      
+      if (!start || !target) {
+        container.textContent = "Please select both starting and target functional groups.";
+        return;
+      }
+      
+      if (start === target) {
+        container.textContent = "Starting and target functional groups are the same. No conversion needed!";
+        return;
+      }
+
+      // Retrieve the conversion steps from database
+      let steps = conversionDatabase[start]?.[target];
+      
+      // If no direct conversion is found in our database, we'll dynamically create a multi-step pathway
+      if (!steps) {
+        // Try to find a common intermediate for multi-step synthesis
+        const intermediates = ["alcohol", "alkylHalide", "aldehyde", "ketone", "carboxylicAcid", "amine"];
+        
+        for (let inter of intermediates) {
+          if (conversionDatabase[start]?.[inter] && conversionDatabase[inter]?.[target]) {
+            // Create a pathway via this intermediate
+            steps = [
+              ...conversionDatabase[start][inter],
+              {
+                title: `Intermediate: ${prettyName(inter)} Formed`,
+                reaction: "",
+                explanation: `We've now converted ${prettyName(start)} to ${prettyName(inter)}. Next we'll convert ${prettyName(inter)} to ${prettyName(target)}.`
+              },
+              ...conversionDatabase[inter][target]
+            ];
+            break;
+          }
+        }
+        
+        // If still no path, try two-step intermediates
+        if (!steps) {
+          for (let inter1 of intermediates) {
+            if (conversionDatabase[start]?.[inter1]) {
+              for (let inter2 of intermediates) {
+                if (conversionDatabase[inter1]?.[inter2] && conversionDatabase[inter2]?.[target]) {
+                  // Create a pathway via two intermediates
+                  steps = [
+                    ...conversionDatabase[start][inter1],
+                    {
+                      title: `First Intermediate: ${prettyName(inter1)} Formed`,
+                      reaction: "",
+                      explanation: `Converted ${prettyName(start)} to ${prettyName(inter1)}.`
+                    },
+                    ...conversionDatabase[inter1][inter2],
+                    {
+                      title: `Second Intermediate: ${prettyName(inter2)} Formed`,
+                      reaction: "",
+                      explanation: `Converted ${prettyName(inter1)} to ${prettyName(inter2)}.`
+                    },
+                    ...conversionDatabase[inter2][target]
+                  ];
+                  break;
+                }
+              }
+              if (steps) break;
+            }
+          }
+        }
+        
+        // As a last resort, create a generic pathway if nothing specific found
+        if (!steps) {
+          steps = [
+            {
+              title: "Conversion to Alkyl Halide",
+              reaction: chemFormula("R-group → RX"),
+              explanation: `First, convert ${prettyName(start)} to an alkyl halide, which is a versatile intermediate.`
+            },
+            {
+              title: "Nucleophilic Substitution",
+              reaction: chemFormula("RX + Nu^- → RNu + X^-"),
+              explanation: "Perform appropriate substitution reactions to introduce the desired functional group."
+            },
+            {
+              title: "Functional Group Transformation",
+              reaction: chemFormula("RNu → Target"),
+              explanation: `Finally, transform the intermediate to ${prettyName(target)} through suitable reagents.`
+            }
+          ];
+        }
+      }
+
+      // Render steps with formatting
+      container.innerHTML = "";
+      
+      const header = document.createElement("div");
+      header.style.fontSize = "1.4rem";
+      header.style.fontWeight = "900";
+      header.style.marginBottom = "1.5rem";
+      header.style.color = "#a63500";
+      header.innerHTML = `Converting <span style="text-decoration: underline;">${prettyName(start)}</span> to <span style="text-decoration: underline;">${prettyName(target)}</span>:`;
+      container.appendChild(header);
+
+      steps.forEach((step, i) => {
+        const stepDiv = document.createElement("div");
+        stepDiv.className = "step";
+
+        const title = document.createElement("div");
+        title.className = "step-title";
+        title.textContent = `Step ${i + 1}: ${step.title}`;
+        stepDiv.appendChild(title);
+
+        if (step.reaction) {
+          const reaction = document.createElement("div");
+          reaction.innerHTML = `<strong>Reaction:</strong> ${step.reaction}`;
+          reaction.style.marginTop = "0.3rem";
+          stepDiv.appendChild(reaction);
+        }
+
+        if (step.explanation) {
+          const explanation = document.createElement("div");
+          explanation.className = "explanation";
+          explanation.textContent = step.explanation;
+          stepDiv.appendChild(explanation);
+        }
+
+        container.appendChild(stepDiv);
+      });
+
+      container.scrollIntoView({ behavior: "smooth" });
+    }, 500);
+  }
+</script>
+</body>
+</html>
+
